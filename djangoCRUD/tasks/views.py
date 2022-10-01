@@ -1,3 +1,4 @@
+from distutils.log import error
 from turtle import title
 from django.shortcuts import render
 from django.contrib.auth.forms import UserCreationForm
@@ -26,5 +27,11 @@ def signup(request):
                 user.save()
                 return HttpResponse('Usuario creado exitosamente')
             except:
-                return HttpResponse('El nombre de usuario ya existe')
-        return HttpResponse('Las contraseñas no coinciden')
+                return render(request, 'signup.html',{
+                    'form' : UserCreationForm,
+                    'error': 'El nombre de usuario ya existe'
+                })
+        return render(request, 'signup.html',{
+            'form' : UserCreationForm,
+            'error': 'Las contraseñas no coinciden'
+        })
