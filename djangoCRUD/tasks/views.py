@@ -1,12 +1,9 @@
-from cmath import log
-from distutils.log import error
-from turtle import title
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
-from django.http import HttpResponse
 from django.db import IntegrityError
+from .forms import TaskForm
 
 # Create your views here.
 def home(request):
@@ -43,6 +40,25 @@ def signup(request):
 
 def tasks(request):
     return render(request, 'tasks.html')
+
+def createTasks(request):
+    
+    if request.method == 'GET':
+        return render(request, 'createTasks.html', {
+            'form': TaskForm
+        })
+    else: 
+        try:
+            form = TaskForm(request.POST)
+            new_Task = form.save(commit=False)
+            new_Task.user = request.user
+            new_Task.save()
+            return redirect('tasks')
+        except ValueError:
+          return render(request, 'createTasks.html', {
+            'form': TaskForm
+            'error': 'Porfavor ingrese datos válidos'
+        })  
 
 def signout(request):
     logout(request)
