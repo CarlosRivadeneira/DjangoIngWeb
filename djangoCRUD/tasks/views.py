@@ -63,8 +63,19 @@ def createTasks(request):
         })  
 
 def taskDetail(request, task_id):
-    task = get_object_or_404(Task, pk=task_id)
-    return render(request, 'taskDetail.html', {'task': task})
+    if request.method == 'GET':
+        task = get_object_or_404(Task, pk=task_id, user=request.user)
+        form = TaskForm(instance=task)
+        return render(request, 'taskDetail.html', {'task': task, 'form': form})
+    else:
+        try:
+            task = get_object_or_404(Task, pk=task_id, user=request.user)
+            form = TaskForm(request.POST, instance=task)
+            form.save()
+            return redirect('tasks')
+        except ValueError:
+            return render(request, 'taskDetail.html', {'task': task, 'form': form,
+            'error': 'Error al actualizar la tarea'})
 
 def signout(request):
     logout(request)
