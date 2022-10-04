@@ -6,6 +6,7 @@ from django.contrib.auth import login, logout, authenticate
 from django.db import IntegrityError
 from .forms import TaskForm
 from .models import Task
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def home(request):
@@ -39,16 +40,18 @@ def signup(request):
             'error': 'Las contraseñas no coinciden'
         })
 
-
+@login_required
 def tasks(request):
     tasks = Task.objects.filter(user=request.user, datecompleted__isnull=True)
     return render(request, 'tasks.html', {'tasks': tasks})
 
+@login_required
 def tasks_completed(request):
     tasks = Task.objects.filter(user=request.user, datecompleted__isnull=False).order_by
     ('-dateCompleted')
     return render(request, 'tasks.html', {'tasks': tasks})
 
+@login_required
 def createTasks(request):
     
     if request.method == 'GET':
@@ -68,6 +71,7 @@ def createTasks(request):
             'error': 'Porfavor ingrese datos válidos'
         })  
 
+@login_required
 def taskDetail(request, task_id):
     if request.method == 'GET':
         task = get_object_or_404(Task, pk=task_id, user=request.user)
@@ -83,6 +87,7 @@ def taskDetail(request, task_id):
             return render(request, 'taskDetail.html', {'task': task, 'form': form,
             'error': 'Error al actualizar la tarea'})
 
+@login_required
 def completeTask(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user=request.user)
     if request.method == 'POST':
@@ -90,12 +95,14 @@ def completeTask(request, task_id):
         task.save()
         return redirect('tasks')
 
+@login_required
 def deleteTask(request, task_id):
     task = get_object_or_404(Task, pk=task_id, user=request.user)
     if request.method == 'POST':
         task.delete()
         return redirect('tasks')
 
+@login_required
 def signout(request):
     logout(request)
     return redirect('home')
