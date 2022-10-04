@@ -16,21 +16,24 @@
             
             {% if user.is_authenticated %}
             <li>
-                <a href="/tasks">Tareas</a>
+                <a href="{% url 'tasks' %}">Tareas pendientes</a>
             </li>
             <li>
-                <a href="/tasks/create/">Crear Tareas</a>
+                <a href="{% url 'tasks_completed' %}">Tareas completas</a>
             </li>
             <li>
-                <a href="/logout">Logout</a>
+                <a href="{% url 'createTasks' %}">Crear Tareas</a>
+            </li>
+            <li>
+                <a href="{% url 'logout' %}">Logout</a>
             </li>
 
             {% else %}
             <li>
-                <a href="/signup">Signup</a>
+                <a href="{% url 'signup' %}">Signup</a>
             </li>
             <li>
-                <a href="/signin">Signin</a>
+                <a href="{% url 'signin' %}">Signin</a>
             </li>
             {% endif %}
 
